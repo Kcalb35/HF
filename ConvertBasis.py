@@ -21,8 +21,8 @@ def process(li,number,file):
                 tmpp =[]
                 for line in shell[1:]:
                     component = split(line)
-                    tmps.append([float(component[0]),float(component[0])])
-                    tmpp.append([float(component[1]),float(component[2])])
+                    tmps.append([float(component[0]),float(component[1])])
+                    tmpp.append([float(component[0]),float(component[2])])
                 s.append(tmps)
                 p.append(tmpp)
             elif(obital=="D"):

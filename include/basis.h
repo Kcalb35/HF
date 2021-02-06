@@ -1,5 +1,6 @@
 #include <vector>
 #include <string>
+#include <fstream>
 
 struct GTO
 {
@@ -18,6 +19,7 @@ struct Orbital
     // magentic number
     int m;
 
+    // obital name
     std::string name;
 
     // an orbital consist of GTO s
@@ -38,13 +40,5 @@ struct Atom
     double cartesian[3];
 };
 
-// TODO 双电子积分
-
-std::vector<Atom> basis_scanf(FILE *basis)
-{
-    // 先实现STO-3G
-    std::vector<Atom> atoms;
-
-
-    return atoms;
-}
+std::vector<Atom> ReadBasis(std::fstream &ifile);
+Orbital SetOrbital(int m, Orbital ob);
