@@ -1,4 +1,5 @@
 #include <vector>
+#include <map>
 #include <string>
 #include <fstream>
 
@@ -117,4 +118,32 @@ Orbital SetOrbital(int m, Orbital ob)
         break;
     }
     return ob;
+}
+
+// get index map for easier allocate atom from input file
+std::map<std::string, int> GetIndexMap(std::vector<Atom> &atoms)
+{
+    std::map<std::string, int> map;
+    for (auto &atom : atoms)
+    {
+        map[atom.name] = atom.n;
+    }
+    return map;
+}
+
+void SyncCoordAndName(Atom & atom){
+    for(auto &orbital :atom.Orbitals){
+        for (int i = 0; i < 3; i++)
+        {
+            orbital.cartesian[i] = atom.cartesian[i];
+        }
+        orbital.name = atom.name + orbital.name;
+        for(auto &gto:orbital.component){
+            for (int i = 0; i < 3; i++)
+            {
+                gto.cartesian[i] = atom.cartesian[i];
+            }
+            
+        } 
+    }
 }

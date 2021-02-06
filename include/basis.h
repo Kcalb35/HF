@@ -1,5 +1,8 @@
+#ifndef BASIS_H
+#define BASIS_H
 #include <vector>
 #include <string>
+#include <map>
 #include <fstream>
 
 struct GTO
@@ -42,3 +45,7 @@ struct Atom
 
 std::vector<Atom> ReadBasis(std::fstream &ifile);
 Orbital SetOrbital(int m, Orbital ob);
+std::map<std::string, int> GetIndexMap(std::vector<Atom> &atoms);
+void SyncCoordAndName(Atom & atom);
+
+#endif
