@@ -7,11 +7,11 @@ int main(int argc, char const *argv[])
     using namespace std;
 
     fstream ifile;
-    ifile.open("..\\FinedBaseSet\\STO-3G.txt",ios::in);
+    ifile.open("basis/STO-3G.txt",ios::in);
 
     auto atoms = ReadBasis(ifile);
 
-    Atom Li = atoms[2];
+    Atom Li = atoms[1];
     cout << Li.name <<endl;
     for(auto &orbital : Li.Orbitals){
         cout << orbital.name <<" " << orbital.n << orbital.l<<orbital.m<<endl;
@@ -22,5 +22,7 @@ int main(int argc, char const *argv[])
     }
 
     ifile.close();
+
+    
     return 0;
 }

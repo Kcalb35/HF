@@ -26,7 +26,9 @@ struct HFoption
 
     // number of electrons
     int ELECTRON_NUMBER = 0;
+    // number of all orbitals
+    int ORBITAL_NUMBER = 0;
 };
 
-void ReadInputFile(std::fstream &ifile, HFoption &option, std::vector<Atom> &atom_list, std::vector<Atom> &AtomListByOrder);
+void ReadInputFile(std::fstream &ifile, HFoption &option, std::vector<Atom> &atom_list, std::vector<Atom> &AtomListByOrder,std::vector<Orbital> & AllOrbitals);
 #endif

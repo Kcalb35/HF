@@ -4,7 +4,7 @@
 
 #include "../include/input.h"
 
-void ReadInputFile(std::fstream &ifile, HFoption &option, std::vector<Atom> &atom_list, std::vector<Atom> &AtomListByOrder)
+void ReadInputFile(std::fstream &ifile, HFoption &option, std::vector<Atom> &atom_list, std::vector<Atom> &AtomListByOrder,std::vector<Orbital> & AllOrbitals)
 {
     std::string inputLine;
     std::map<std::string, int> index;
@@ -14,7 +14,7 @@ void ReadInputFile(std::fstream &ifile, HFoption &option, std::vector<Atom> &ato
         if (inputLine == "#BASIS")
         {
             ifile >> option.BASIS_NAME;
-            std::string basisFilePath = "basis\\" + option.BASIS_NAME + ".txt";
+            std::string basisFilePath = "basis/" + option.BASIS_NAME + ".txt";
 
             // start read in basis
             std::fstream basisFstream;
@@ -72,4 +72,7 @@ void ReadInputFile(std::fstream &ifile, HFoption &option, std::vector<Atom> &ato
             }
         }
     }
+
+    // get all orbitals into AllOrbitals
+    option.ORBITAL_NUMBER = GetAllOrbitals(atom_list,AllOrbitals);
 }

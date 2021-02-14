@@ -2,6 +2,7 @@
 #include <map>
 #include <string>
 #include <fstream>
+#include <cmath>
 
 #include "../include/basis.h"
 
@@ -58,6 +59,7 @@ std::vector<Atom> ReadBasis(std::fstream &ifile)
     return atomsByOrder;
 }
 
+// set magentic number and normalize
 Orbital SetOrbital(int m, Orbital ob)
 {
     ob.m = m;
@@ -117,6 +119,10 @@ Orbital SetOrbital(int m, Orbital ob)
         throw "Not Implement";
         break;
     }
+    for (GTO &gto:ob.component){
+        // normalize
+        gto.coefficient =  gto.coefficient * Normalize(gto.orbital_exponent,gto.ang[0],gto.ang[1], gto.ang[2]);
+    }
     return ob;
 }
 
@@ -131,19 +137,40 @@ std::map<std::string, int> GetIndexMap(std::vector<Atom> &atoms)
     return map;
 }
 
-void SyncCoordAndName(Atom & atom){
-    for(auto &orbital :atom.Orbitals){
+void SyncCoordAndName(Atom &atom)
+{
+    for (auto &orbital : atom.Orbitals)
+    {
         for (int i = 0; i < 3; i++)
         {
             orbital.cartesian[i] = atom.cartesian[i];
         }
         orbital.name = atom.name + orbital.name;
-        for(auto &gto:orbital.component){
+        for (auto &gto : orbital.component)
+        {
             for (int i = 0; i < 3; i++)
             {
                 gto.cartesian[i] = atom.cartesian[i];
             }
-            
-        } 
+        }
     }
+}
+
+int GetAllOrbitals(std::vector<Atom> &atoms, std::vector<Orbital> &orbitals)
+{
+    int numOfOrbital = 0;
+    for (auto &atom : atoms)
+    {
+        for (auto &orbital : atom.Orbitals)
+        {
+            orbitals.push_back(orbital);
+            numOfOrbital++;
+        }
+    }
+    return numOfOrbital;
+}
+
+double Normalize(double exponent, int i, int j, int k)
+{
+    return pow(2 * exponent / M_PI, 0.75) * pow((pow(8 * exponent, i + j + k) * std::tgamma(i + 1) * std::tgamma(j + 1) * std::tgamma(k + 1)) / (std::tgamma(2 * i + 1) * std::tgamma(2 * j + 1) * std::tgamma(2 * k + 1)), 0.5);
 }

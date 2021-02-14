@@ -46,6 +46,8 @@ struct Atom
 std::vector<Atom> ReadBasis(std::fstream &ifile);
 Orbital SetOrbital(int m, Orbital ob);
 std::map<std::string, int> GetIndexMap(std::vector<Atom> &atoms);
-void SyncCoordAndName(Atom & atom);
+void SyncCoordAndName(Atom &atom);
+int GetAllOrbitals(std::vector<Atom> &atoms, std::vector<Orbital> &orbitals);
+double Normalize(double exponent, int i, int j, int k);
 
 #endif

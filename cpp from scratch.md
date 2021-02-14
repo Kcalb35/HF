@@ -4,6 +4,19 @@
 
 在h文件和cpp文件里，注意不要重复定义数据结构
 
+可以使用
+
+```cpp
+#ifndef AAA_H
+#define AAA_H
+
+// your code here
+
+#endif
+```
+
+
+
 # 文件读写
 
 有`fstream` `ifstream` `ofstream`
@@ -15,6 +28,12 @@ std::fstream file;
 file.open("your-file-path",std::ios::in| std::ios::out);
 int i;
 file >> i;
+
+while(file.good()){}
+
+bool b = file.fail();
+b = file.eof();
+
 file << i<<endl;
 file.close();
 ```
@@ -43,8 +62,13 @@ std::to_string(yourIntVar);
 
 
 
-# Make
+# Make && CMake
 
 ### windows环境配置
 
 将`\MinGW\bin`下的`\MinGW\bin\mingw32-make.exe`重命名为`make.exe`
+
+
+
+### CMake 文件撰写
+
