@@ -119,9 +119,10 @@ Orbital SetOrbital(int m, Orbital ob)
         throw "Not Implement";
         break;
     }
-    for (GTO &gto:ob.component){
+    for (GTO &gto : ob.component)
+    {
         // normalize
-        gto.coefficient =  gto.coefficient * Normalize(gto.orbital_exponent,gto.ang[0],gto.ang[1], gto.ang[2]);
+        gto.coefficient = gto.coefficient * Normalize(gto.orbital_exponent, gto.ang[0], gto.ang[1], gto.ang[2]);
     }
     return ob;
 }
@@ -173,4 +174,18 @@ int GetAllOrbitals(std::vector<Atom> &atoms, std::vector<Orbital> &orbitals)
 double Normalize(double exponent, int i, int j, int k)
 {
     return pow(2 * exponent / M_PI, 0.75) * pow((pow(8 * exponent, i + j + k) * std::tgamma(i + 1) * std::tgamma(j + 1) * std::tgamma(k + 1)) / (std::tgamma(2 * i + 1) * std::tgamma(2 * j + 1) * std::tgamma(2 * k + 1)), 0.5);
+}
+
+void InitGTOAng(GTO &gto, int a, int b, int c)
+{
+    gto.ang[0] = a;
+    gto.ang[1] = b;
+    gto.ang[2] = c;
+}
+
+void InitGTOCartisian(GTO &gto, double x, double y, double z)
+{
+    gto.cartesian[0] = x;
+    gto.cartesian[1] = y;
+    gto.cartesian[2] = z;
 }

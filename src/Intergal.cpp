@@ -1,4 +1,5 @@
 #include <cmath>
+#include <vector>
 
 #include "../include/basis.h"
 #include "../include/Intergal.h"
@@ -14,32 +15,32 @@ double SIntergal(double ra[], double rb[], int ax, int ay, int az, int bx, int b
     if (ax > 0)
     {
         double pi = (alpha * ra[0] + beta * rb[0]) / zeta;
-        return (pi - ra[0]) * SIntergal(ra, rb, ax - 1, ay, az, bx, by, bz, alpha, beta) + 0.5 * bx / zeta * SIntergal(ra, rb, ax - 1, ay, az, bx - 1, by, bz, alpha, beta) + 0.5 * (ax - 1) / alpha * SIntergal(ra, rb, ax - 2, ay, az, bx, by, bz, alpha, beta);
+        return (pi - ra[0]) * SIntergal(ra, rb, ax - 1, ay, az, bx, by, bz, alpha, beta) + 0.5 * bx / zeta * SIntergal(ra, rb, ax - 1, ay, az, bx - 1, by, bz, alpha, beta) + 0.5 * (ax - 1) / zeta * SIntergal(ra, rb, ax - 2, ay, az, bx, by, bz, alpha, beta);
     }
     else if (ay > 0)
     {
         double pi = (alpha * ra[1] + beta * rb[1]) / zeta;
-        return (pi - ra[1]) * SIntergal(ra, rb, ax, ay - 1, az, bx, by, bz, alpha, beta) + 0.5 * by / zeta * SIntergal(ra, rb, ax, ay - 1, az, bx, by - 1, bz, alpha, beta) + 0.5 * (ay - 1) / alpha * SIntergal(ra, rb, ax, ay - 2, az, bx, by, bz, alpha, beta);
+        return (pi - ra[1]) * SIntergal(ra, rb, ax, ay - 1, az, bx, by, bz, alpha, beta) + 0.5 * by / zeta * SIntergal(ra, rb, ax, ay - 1, az, bx, by - 1, bz, alpha, beta) + 0.5 * (ay - 1) / zeta * SIntergal(ra, rb, ax, ay - 2, az, bx, by, bz, alpha, beta);
     }
     else if (az > 0)
     {
         double pi = (alpha * ra[2] + beta * rb[2]) / zeta;
-        return (pi - ra[2]) * SIntergal(ra, rb, ax, ay, az - 1, bx, by, bz, alpha, beta) + 0.5 * bz / zeta * SIntergal(ra, rb, ax, ay, az - 1, bx, by, bz - 1, alpha, beta) + 0.5 * (az - 1) / alpha * SIntergal(ra, rb, ax, ay, az - 2, bx, by, bz, alpha, beta);
+        return (pi - ra[2]) * SIntergal(ra, rb, ax, ay, az - 1, bx, by, bz, alpha, beta) + 0.5 * bz / zeta * SIntergal(ra, rb, ax, ay, az - 1, bx, by, bz - 1, alpha, beta) + 0.5 * (az - 1) / zeta * SIntergal(ra, rb, ax, ay, az - 2, bx, by, bz, alpha, beta);
     }
     else if (bx > 0)
     {
         double pi = (alpha * ra[0] + beta * rb[0]) / zeta;
-        return (pi - rb[0]) * SIntergal(ra, rb, ax, ay, az, bx - 1, by, bz, alpha, beta) + 0.5 * ax / zeta * SIntergal(ra, rb, ax - 1, ay, az, bx - 1, by, bz, alpha, beta) + 0.5 * (bx - 1) / beta * SIntergal(ra, rb, ax, ay, az, bx - 2, by, bz, alpha, beta);
+        return (pi - rb[0]) * SIntergal(ra, rb, ax, ay, az, bx - 1, by, bz, alpha, beta) + 0.5 * ax / zeta * SIntergal(ra, rb, ax - 1, ay, az, bx - 1, by, bz, alpha, beta) + 0.5 * (bx - 1) / zeta * SIntergal(ra, rb, ax, ay, az, bx - 2, by, bz, alpha, beta);
     }
     else if (by > 0)
     {
         double pi = (alpha * ra[1] + beta * rb[1]) / zeta;
-        return (pi - rb[1]) * SIntergal(ra, rb, ax, ay, az, bx, by - 1, bz, alpha, beta) + 0.5 * ay / zeta * SIntergal(ra, rb, ax, ay - 1, az, bx, by - 1, bz, alpha, beta) + 0.5 * (by - 1) / beta * SIntergal(ra, rb, ax, ay, az, bx, by - 2, bz, alpha, beta);
+        return (pi - rb[1]) * SIntergal(ra, rb, ax, ay, az, bx, by - 1, bz, alpha, beta) + 0.5 * ay / zeta * SIntergal(ra, rb, ax, ay - 1, az, bx, by - 1, bz, alpha, beta) + 0.5 * (by - 1) / zeta * SIntergal(ra, rb, ax, ay, az, bx, by - 2, bz, alpha, beta);
     }
     else if (bz > 0)
     {
         double pi = (alpha * ra[2] + beta * rb[2]) / zeta;
-        return (pi - rb[2]) * SIntergal(ra, rb, ax, ay, az, bx, by, bz - 1, alpha, beta) + 0.5 * az / zeta * SIntergal(ra, rb, ax, ay, az - 1, bx, by, bz - 1, alpha, beta) + 0.5 * (bz - 1) / beta * SIntergal(ra, rb, ax, ay, az, bx, by, bz - 2, alpha, beta);
+        return (pi - rb[2]) * SIntergal(ra, rb, ax, ay, az, bx, by, bz - 1, alpha, beta) + 0.5 * az / zeta * SIntergal(ra, rb, ax, ay, az - 1, bx, by, bz - 1, alpha, beta) + 0.5 * (bz - 1) / zeta * SIntergal(ra, rb, ax, ay, az, bx, by, bz - 2, alpha, beta);
     }
     else
     {
@@ -49,18 +50,92 @@ double SIntergal(double ra[], double rb[], int ax, int ay, int az, int bx, int b
     }
 }
 
+double GTO_SIntergal(GTO &gto1, GTO &gto2)
+{
+    return gto1.coefficient * gto2.coefficient * SIntergal(gto1.cartesian, gto2.cartesian, gto1.ang[0], gto1.ang[1], gto1.ang[2], gto2.ang[0], gto2.ang[1], gto2.ang[2], gto1.orbital_exponent, gto2.orbital_exponent);
+}
+
 double Orbital_SIntergal(Orbital &ob1, Orbital &ob2)
 {
-    double result=0;
-    for(GTO &gtoa:ob1.component){
-        for (GTO &gtob:ob2.component){
-            result += GTO_SIntergal(gtoa,gtob);
+    double result = 0;
+    for (GTO &gtoa : ob1.component)
+    {
+        for (GTO &gtob : ob2.component)
+        {
+            result += GTO_SIntergal(gtoa, gtob);
         }
     }
     return result;
 }
 
-double GTO_SIntergal(GTO &gto1, GTO &gto2)
+// derivative in direction dir for one gto
+std::vector<GTO> GTO_Derivative(GTO &gto, int dir)
 {
-    return gto1.coefficient * gto2.coefficient * SIntergal(gto1.cartesian, gto2.cartesian, gto1.ang[0], gto1.ang[1], gto1.ang[2], gto2.ang[0], gto2.ang[1], gto2.ang[2], gto1.orbital_exponent, gto2.orbital_exponent);
+    std::vector<GTO> result;
+    if (gto.ang[dir] == 0)
+    {
+        // only one part
+        GTO g1 = gto;
+        g1.ang[dir] += 1;
+        g1.coefficient = g1.coefficient * -2 * g1.orbital_exponent;
+        result.push_back(g1);
+    }
+    else
+    {
+        // two part
+        GTO g1 = gto, g2 = gto;
+        g1.ang[dir] += 1;
+        g1.coefficient = g1.coefficient * -2.0 * g1.orbital_exponent;
+        g2.coefficient *= g2.ang[dir];
+        g2.ang[dir] -= 1;
+        result.push_back(g1);
+        result.push_back(g2);
+    }
+    return result;
+}
+
+// do second order derivative
+// 0-x 1-y 2-z
+std::vector<GTO> GTO_SecondOrder_Derivative(GTO &gto, int dir)
+{
+    std::vector<GTO> result;
+    auto d = GTO_Derivative(gto, dir);
+    for (auto &dgto : d)
+    {
+        auto dd = GTO_Derivative(dgto, dir);
+        result.insert(result.end(), dd.begin(), dd.end());
+    }
+    return result;
+}
+
+double GTO_Kinetic_Intergal(GTO &LGTO, GTO &RGTO)
+{
+    double result = 0;
+    for (int i = 0; i < 3; i++)
+    {
+        // for each direction
+        // make second derivative to Right GTO
+        std::vector<GTO> ddgto = GTO_SecondOrder_Derivative(RGTO, i);
+        for (GTO &gto : ddgto)
+        {
+            // for each second derivative , calculate SIntergal
+            result += GTO_SIntergal(LGTO, gto);
+        }
+    }
+    // result need to multipy by -0.5
+    result *= -0.5;
+    return result;
+}
+
+double Orbital_Kinetic_Intergal(Orbital &LOrbital, Orbital &ROrbital)
+{
+    double result = 0;
+    for (auto &LGto : LOrbital.component)
+    {
+        for (auto &RGto : ROrbital.component)
+        {
+            result += GTO_Kinetic_Intergal(LGto, RGto);
+        }
+    }
+    return result;
 }

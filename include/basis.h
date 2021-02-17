@@ -1,5 +1,5 @@
-#ifndef BASIS_H
-#define BASIS_H
+_Pragma("once")
+
 #include <vector>
 #include <string>
 #include <map>
@@ -50,4 +50,5 @@ void SyncCoordAndName(Atom &atom);
 int GetAllOrbitals(std::vector<Atom> &atoms, std::vector<Orbital> &orbitals);
 double Normalize(double exponent, int i, int j, int k);
 
-#endif
+void InitGTOAng(GTO &gto, int a, int b, int c);
+void InitGTOCartisian(GTO &gto, double x, double y, double z);
