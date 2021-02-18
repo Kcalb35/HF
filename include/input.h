@@ -1,5 +1,5 @@
-#ifndef INPUT_H
-#define INPUT_H
+_Pragma("once")
+
 #include <fstream>
 #include <vector>
 #include <string>
@@ -31,4 +31,3 @@ struct HFoption
 };
 
 void ReadInputFile(std::fstream &ifile, HFoption &option, std::vector<Atom> &atom_list, std::vector<Atom> &AtomListByOrder,std::vector<Orbital> & AllOrbitals);
-#endif

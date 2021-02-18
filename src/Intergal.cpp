@@ -1,5 +1,6 @@
 #include <cmath>
 #include <vector>
+#include "gsl/gsl_sf_gamma.h"
 
 #include "../include/basis.h"
 #include "../include/Intergal.h"
@@ -137,5 +138,84 @@ double Orbital_Kinetic_Intergal(Orbital &LOrbital, Orbital &ROrbital)
             result += GTO_Kinetic_Intergal(LGto, RGto);
         }
     }
+    return result;
+}
+
+// boys function
+double Boys_Function(double x, int m)
+{
+    if (fabs(x)<1e-8) return 1.0/(1.0+2.0*m);
+    return 0.5 * pow(x, -0.5 - m) * (gsl_sf_gamma(m + 0.5) - gsl_sf_gamma_inc(0.5 + m, x));
+}
+
+double ZIntergal(const double ra[], const double rc[], const double rb[], const int anga[], const int angb[], double alpha, double beta, int m)
+{
+    for (int i = 0; i < 3; i++)
+    {
+        if (anga[i] < 0 || angb[i] < 0)
+            return 0;
+    }
+
+    double zeta = alpha + beta;
+    double xi = alpha * beta / zeta;
+    double P[3];
+    // AB and PC squared
+    double AB = 0, PC = 0;
+
+    for (int i = 0; i < 3; i++)
+        P[i] = (alpha * ra[i] + beta * rb[i]) / zeta;
+
+    for (int i = 0; i < 3; i++)
+    {
+        // cal AB squared and PC squared
+        AB += pow(ra[i] - rb[i], 2);
+        PC += pow(P[i] - rc[i], 2);
+    }
+
+    for (int i = 0; i < 3; i++)
+    {
+        if (anga[i] > 0)
+        {
+            // a minus 1 in one direction
+            int am[3]{anga[0], anga[1], anga[2]};
+            // a minus 2 in one direction
+            int amm[3]{anga[0], anga[1], anga[2]};
+            // b minux 1 in one direciton
+            int bm[3]{angb[0], angb[1], angb[2]};
+            am[i] -= 1;
+            amm[i] -= 2;
+            bm[i] -= 1;
+            return beta / zeta * (rb[i] - ra[i]) * ZIntergal(ra, rc, rb, am, angb, alpha, beta, m) + (rc[i] - ra[i] - beta / zeta * (rb[i] - ra[i])) * ZIntergal(ra, rc, rb, am, angb, alpha, beta, m + 1) +  0.5 * angb[i] / zeta * (ZIntergal(ra, rc, rb, am, bm, alpha, beta, m) - ZIntergal(ra, rc, rb, am, bm, alpha, beta, m + 1)) +  0.5 * am[i] / zeta * (ZIntergal(ra, rc, rb, amm, angb, alpha, beta, m) - ZIntergal(ra, rc, rb, amm, angb, alpha, beta, m + 1));
+        }
+        else if (angb[i] > 0)
+        {
+            // a minus 1 in one direction
+            int am[3]{anga[0], anga[1], anga[2]};
+            // b minus 2 in one direction
+            int bmm[3]{angb[0], angb[1], angb[2]};
+            // b minux 1 in one direciton
+            int bm[3]{angb[0], angb[1], angb[2]};
+            am[i] -= 1;
+            bm[i] -= 1;
+            bmm[i] -= 2;
+
+           return alpha / zeta * (ra[i] - rb[i]) * ZIntergal(ra, rc, rb, anga, bm, alpha, beta, m) + (rc[i] - rb[i] - alpha / zeta * (ra[i] - rb[i])) * ZIntergal(ra, rc, rb, anga, bm, alpha, beta, m + 1) + 0.5 * anga[i] / zeta * (ZIntergal(ra, rc, rb, am, bm, alpha, beta, m) - ZIntergal(ra, rc, rb, am, bm, alpha, beta, m + 1)) + 0.5 * bm[i] / zeta * (ZIntergal(ra, rc, rb, anga, bmm, alpha, beta, m) - ZIntergal(ra, rc, rb, anga, bmm, alpha, beta, m + 1));
+        }
+    }
+    // all equal to zero, here must return init value
+    return 2.0 * M_PI / zeta * exp(-xi * AB) * Boys_Function(zeta * PC, m);
+}
+
+double GTO_ZIntergal(GTO &LGTO, GTO &RGTO, const double rz[])
+{
+    return LGTO.coefficient * RGTO.coefficient * ZIntergal(LGTO.cartesian, rz, RGTO.cartesian, LGTO.ang, RGTO.ang, LGTO.orbital_exponent, RGTO.orbital_exponent, 0);
+}
+
+double Orbital_ZIntergal(Orbital &LOrbital, Orbital &ROrbital, const double rz[])
+{
+    double result = 0;
+    for (auto &gto1 : LOrbital.component)
+        for (auto &gto2 : ROrbital.component)
+            result += GTO_ZIntergal(gto1, gto2, rz);
     return result;
 }
