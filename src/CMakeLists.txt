@@ -5,7 +5,7 @@ find_package(GSL REQUIRED)
 set(SOURCES
     basis.cpp
     input.cpp
-    Intergal.cpp
+    Integral.cpp
 )
 
 add_library(${PROJECT_NAME} STATIC ${SOURCES})
