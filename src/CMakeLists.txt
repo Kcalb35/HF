@@ -6,6 +6,7 @@ set(SOURCES
     basis.cpp
     input.cpp
     Integral.cpp
+    gslextra.cpp
 )
 
 add_library(${PROJECT_NAME} STATIC ${SOURCES})
