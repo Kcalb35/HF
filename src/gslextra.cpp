@@ -6,7 +6,7 @@
 
 #include "../include/gslextra.h"
 
-gsl_quad_tensor *gsl_quad_tensor_alloc(int i, int j, int k, int l)
+gsl_quad_tensor * gsl_quad_tensor_alloc(int i, int j, int k, int l)
 {
     gsl_quad_tensor *result = new gsl_quad_tensor;
     result->i = i;
@@ -114,8 +114,11 @@ void gsl_quad_tensor_scale(gsl_quad_tensor *dst, double x)
 }
 
 
-// input Fock and S
-// output eigen value by order and eigenvector
+/// Lowdin method
+/// \param Fock Fork matrix
+/// \param S overlap matrix
+/// \param eigen eigen Energy order by ascending
+/// \param eigenvector
 void gsl_eigen_Lowdin_diag(gsl_matrix *Fock, gsl_matrix *S, gsl_vector *eigen, gsl_matrix *eigenvector)
 {
 

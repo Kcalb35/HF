@@ -20,4 +20,4 @@ void gsl_quad_tensor_set_matrix(gsl_quad_tensor *q, int i, int j, int k, int l, 
 void gsl_quad_tensor_add(gsl_quad_tensor *dst, gsl_quad_tensor *src);
 void gsl_quad_tensor_sub(gsl_quad_tensor *dst, gsl_quad_tensor *src);
 void gsl_quad_tensor_scale(gsl_quad_tensor *dst, double x);
-void gsl_eigen_Lowdin_diag(gsl_matrix *Fock, gsl_matrix *S, gsl_vector *eigen, gsl_matrix *eigenvector)
+void gsl_eigen_Lowdin_diag(gsl_matrix *Fock, gsl_matrix *S, gsl_vector *eigen, gsl_matrix *eigenvector);
