@@ -1,5 +1,6 @@
 _Pragma("once")
 
+#include <gsl/gsl_matrix.h>
 #include "../include/basis.h"
 
 double SIntegral(double *ra, double *rb, int ax, int ay, int az, int bx, int by, int bz, double alpha, double beta);

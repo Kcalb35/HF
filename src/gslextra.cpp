@@ -3,7 +3,8 @@
 #include <gsl/gsl_eigen.h>
 #include <gsl/gsl_blas.h>
 #include <cmath>
-
+#include <iostream>
+#include <iomanip>
 #include "../include/gslextra.h"
 
 gsl_quad_tensor * gsl_quad_tensor_alloc(int i, int j, int k, int l)
@@ -142,7 +143,7 @@ void gsl_eigen_Lowdin_diag(gsl_matrix *Fock, gsl_matrix *S, gsl_vector *eigen, g
     gsl_matrix_memcpy(S_cpy,S);
 
     // calculate U and eigen vector
-    gsl_eigen_symmv(S,S_eigen,U,w);
+    gsl_eigen_symmv(S_cpy,S_eigen,U,w);
 
     // set up S_minus_half
     for (int i = 0; i < length; i++)
@@ -179,4 +180,21 @@ void gsl_eigen_Lowdin_diag(gsl_matrix *Fock, gsl_matrix *S, gsl_vector *eigen, g
 
     gsl_eigen_symmv_free(w);
     
+}
+
+void gsl_matrix_print(gsl_matrix *m, int precision, int width) {
+    gsl_matrix_print(m,m->size1,m->size2,precision,width);
+}
+
+void gsl_matrix_print(gsl_matrix *m, int rows, int cols, int precision, int width) {
+    using namespace std;
+    int oldPrecision = cout.precision(precision);
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            cout << setw(width)<< gsl_matrix_get(m,i,j);
+        }
+        cout <<endl;
+    }
+    //reset
+    cout.precision(oldPrecision);
 }

@@ -21,3 +21,6 @@ void gsl_quad_tensor_add(gsl_quad_tensor *dst, gsl_quad_tensor *src);
 void gsl_quad_tensor_sub(gsl_quad_tensor *dst, gsl_quad_tensor *src);
 void gsl_quad_tensor_scale(gsl_quad_tensor *dst, double x);
 void gsl_eigen_Lowdin_diag(gsl_matrix *Fock, gsl_matrix *S, gsl_vector *eigen, gsl_matrix *eigenvector);
+
+void gsl_matrix_print(gsl_matrix * m,int precision=6,int width=14);
+void gsl_matrix_print(gsl_matrix * m,int rows,int cols ,int precision=6,int width=14);

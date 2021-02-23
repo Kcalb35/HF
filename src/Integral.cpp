@@ -4,6 +4,7 @@
 
 #include "../include/basis.h"
 #include "../include/Integral.h"
+#include <gsl/gsl_matrix.h>
 
 #define COEFF_IGNORE_LIMIT 1e-20
 
@@ -58,6 +59,10 @@ double GTO_SIntegral(GTO &gto1, GTO &gto2)
     return gto1.coefficient * gto2.coefficient * SIntegral(gto1.cartesian, gto2.cartesian, gto1.ang[0], gto1.ang[1], gto1.ang[2], gto2.ang[0], gto2.ang[1], gto2.ang[2], gto1.orbital_exponent, gto2.orbital_exponent);
 }
 
+/// calculate overlap integral
+/// \param ob1
+/// \param ob2
+/// \return integral value
 double Orbital_SIntegral(Orbital &ob1, Orbital &ob2)
 {
     double result = 0;
@@ -148,7 +153,7 @@ double Orbital_Kinetic_Integral(Orbital &LOrbital, Orbital &ROrbital)
 // boys function
 double Boys_Function(double x, int m)
 {
-    if (fabs(x) < 1e-8)
+    if (fabs(x) < 1e-6)
         return 1.0 / (1.0 + 2.0 * m);
     return 0.5 * pow(x, -0.5 - m) * (gsl_sf_gamma(m + 0.5) - gsl_sf_gamma_inc(0.5 + m, x));
 }

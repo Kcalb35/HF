@@ -6,8 +6,6 @@
 
 #include "../include/basis.h"
 
-// TODO 双电子积分
-
 std::vector<Atom> ReadBasis(std::fstream &ifile)
 {
     // 先实现STO-3G

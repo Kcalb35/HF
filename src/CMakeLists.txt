@@ -7,7 +7,7 @@ set(SOURCES
     input.cpp
     Integral.cpp
     gslextra.cpp
-        RHF.cpp ../include/RHF.h)
+    RHF.cpp)
 
 add_library(${PROJECT_NAME} STATIC ${SOURCES})
 

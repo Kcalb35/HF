@@ -25,7 +25,7 @@ void ReadInputFile(std::fstream &ifile, HFoption &option, std::vector<Atom> &ato
             // get index map
             index = GetIndexMap(AtomListByOrder);
         }
-        else if (inputLine == "SCF_BEGIN")
+        else if (inputLine == "#SCF_BEGIN")
         {
             // read SCF options
             while (!ifile.eof())

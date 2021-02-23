@@ -4,6 +4,7 @@
 #include <vector>
 #include "../include/Integral.h"
 #include "../include/basis.h"
+#include "../include/gslextra.h"
 
 #define MAX_TEST_ERR 1e-5
 
@@ -118,4 +119,9 @@ TEST(Two_Electron_Transform, coeff)
 
     cout << "--all : " << (*gtos).size() << endl;
     delete gtos;
+}
+
+TEST(gslextra_print,matrix){
+    gsl_matrix *m = gsl_matrix_calloc(3,4);
+    gsl_matrix_print(m);
 }
