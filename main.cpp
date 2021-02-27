@@ -26,22 +26,24 @@ int main(int argc, char const *argv[])
 
     // reading command line params
     for (int i = 0; i < argc; ++i) {
-       if (strcmp(argv[i],"-f")==0){
-          input.append(argv[i+1]);
-       }
-       else if(strcmp(argv[i],"-h")==0){
-          cout <<  "-h :print help message\n";
-          cout << "-f <filename> : specify the input file\n";
-          return 0;
-       }
+        if (strcmp(argv[i],"-f")==0){
+            input.append(argv[i+1]);
+            // try open file
+            ifstream.open(input,ios_base::in);
+            if (!ifstream.is_open()){
+                cout << "ERROR: NO SUCH INPUT FILE\n";
+                return 1;
+            }
+        }
+        else if(strcmp(argv[i],"-h")==0){
+            cout <<  "-h :print help message\n";
+            cout << "-f <filename> : specify the input file\n";
+            return 0;
+        }
     }
 
+
     // reading file into option
-    ifstream.open(input,ios_base::in);
-    if (!ifstream.is_open()){
-        cout << "ERROR: NO SUCH INPUT FILE\n";
-        return 1;
-    }
     ReadInputFile(ifstream,option,allAtoms,atomByOrder,allOrbitals);
 
 
@@ -56,10 +58,10 @@ int main(int argc, char const *argv[])
     RHF_SCF(&total_energy,energy,coeff,allAtoms,allOrbitals,option);
 
     double run_time = float(clock()-begin_time)/ CLOCKS_PER_SEC;
-    cout << "Takes :" <<run_time<<"s"<<endl;
+    cout <<setw(15)<<left<< "Takes:" <<run_time<<"s"<<endl;
 
     // print atom orbital labels
-    cout <<"Atom orbital labels : [";
+    cout <<setw(15)<<left <<"A.O. labels:"<<"[";
     bool first=true;
     for(auto &ob:allOrbitals){
         if(first) {
@@ -71,14 +73,14 @@ int main(int argc, char const *argv[])
     cout <<"]\n";
 
     // print energy
-    cout <<"Total energy : "<<setprecision(12)<<total_energy + nuclei_repulsion(allAtoms)<<endl;
+    cout <<setw(15)<<left <<"Energy:"<<setprecision(12)<<total_energy + nuclei_repulsion(allAtoms)<<endl;
 
 
     cout.precision(6);
     // print MOs
     cout <<"MOs"<<endl;
     for (int i = 0; i < option.ORBITAL_NUMBER; ++i) {
-        cout << i<<" energy="<<setw(10)<<gsl_vector_get(energy,i)<<", occ=";
+        cout <<"Num:" <<i<<" energy="<<setw(10)<<gsl_vector_get(energy,i)<<", occ=";
         if (2*i<option.ELECTRON_NUMBER) cout<<2<<endl;
         else cout <<0<<endl;
     }

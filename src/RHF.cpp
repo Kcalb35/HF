@@ -12,6 +12,7 @@
 #include <gsl/gsl_blas.h>
 #include <cmath>
 #include <iostream>
+#include <iomanip>
 
 /// single electron hamiltonian element
 /// \param LOb left orbital
@@ -233,8 +234,8 @@ void RHF_SCF(double * total_energy, gsl_vector * energyLevel, gsl_matrix * coeff
 
     // preparing data, calculate initial guess
     using namespace std;
-    cout << "Electron numbers:"<<option.ELECTRON_NUMBER<<endl;
-    cout <<"Nuclear repulsion:"<< nuclei_repulsion(allAtoms)<<endl;
+    cout <<setw(15)<<left << "Electrons:"<<option.ELECTRON_NUMBER<<endl;
+    cout <<setw(15)<<left<<"Vnn:"<< nuclei_repulsion(allAtoms)<<endl;
 
     Orbital_S_matrix_set(S_overlap,allOrbitals);
     core_hamiltonian_matrix_set(H_core,allOrbitals,allAtoms);
@@ -269,9 +270,11 @@ void RHF_SCF(double * total_energy, gsl_vector * energyLevel, gsl_matrix * coeff
     Fock_matrix(Fock,quadTensor,P_density,H_core);
     fock_energy = HF_energy(quadTensor,P_density,H_core);
 
-    // print initial fock matrix and HF energyLevel
-    cout <<endl<<"Fock Matrix:"<<endl;
-    gsl_matrix_print(Fock);
+    if (option.SCF_INITIAL_PRINT){
+        // print initial fock matrix and HF energyLevel
+        cout <<endl<<"Fock Matrix:"<<endl;
+        gsl_matrix_print(Fock);
+    }
     cout <<endl<<"HF energyLevel:"<<fock_energy<<endl;
 
     // start SCF
@@ -311,10 +314,10 @@ void RHF_SCF(double * total_energy, gsl_vector * energyLevel, gsl_matrix * coeff
     // end SCF
     cout <<"=============== End HF ==============="<<endl;
     if (!IsConverged){
-        cout <<"WARNING: SCF not converged."<<endl;
+        cout <<setw(15) <<left<<"WARNING:"<<"SCF not converged."<<endl;
     }
     else{
-        cout <<"INFO: SCF converged."<<endl;
+        cout <<setw(15)<<left<<"INFO:"<<"SCF converged."<<endl;
     }
 
     *total_energy = fock_energy;

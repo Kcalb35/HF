@@ -4,3 +4,4 @@ CMakeFiles/
 build/
 lib/
 .idea/
+input_example/test.in
