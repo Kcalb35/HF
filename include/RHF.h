@@ -4,6 +4,12 @@ _Pragma("once")
 #include "basis.h"
 #include "gslextra.h"
 #include "input.h"
+#include <boost/asio/thread_pool.hpp>
+#include <boost/asio/post.hpp>
+
+#define THREADS_NUMBER 6
+
+static boost::asio::thread_pool pool(THREADS_NUMBER);
 
 double single_electron_hamiltonian_element(Orbital &LOb, Orbital &ROb, std::vector<Atom> &atoms);
 void core_hamiltonian_matrix_set(gsl_matrix * dest, std::vector<Orbital> &obs, std::vector<Atom> &atoms);

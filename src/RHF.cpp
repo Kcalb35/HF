@@ -160,19 +160,20 @@ double HF_energy(gsl_quad_tensor *v,gsl_matrix * density,gsl_matrix * h_core){
 void two_electron_quad_tensor_set(gsl_quad_tensor * dest,std::vector<Orbital> &obs){
     // using symmetric to optimize
     int len = obs.size();
-    for (int i = 0; i <len; ++i) {
-        for (int j = 0; j <=i; ++j) {
-            for (int k = 0; k < len; ++k) {
-                for (int l = 0; l <=k; ++l) {
-                    double two_electron_replusion_energy = Two_Electron_JIntegral(obs[i],obs[j],obs[k],obs[l]);
-                    gsl_quad_tensor_set(dest,i,j,k,l,two_electron_replusion_energy);
-                    gsl_quad_tensor_set(dest,i,j,l,k,two_electron_replusion_energy);
-                    gsl_quad_tensor_set(dest,j,i,k,l,two_electron_replusion_energy);
-                    gsl_quad_tensor_set(dest,j,i,l,k,two_electron_replusion_energy);
+    for (int i = 0; i <len; ++i)
+        for (int j = 0; j <=i; ++j)
+            for (int k = 0; k <len; k++) {
+                for (int l = 0; l<=k;  l++) {
+                    boost::asio::post(pool,[dest,i,j,k,l,&obs](){
+                        double two_electron_replusion_energy = Two_Electron_JIntegral(obs[i],obs[j],obs[k],obs[l]);
+                        gsl_quad_tensor_set(dest,i,j,k,l,two_electron_replusion_energy);
+                        gsl_quad_tensor_set(dest,i,j,l,k,two_electron_replusion_energy);
+                        gsl_quad_tensor_set(dest,j,i,k,l,two_electron_replusion_energy);
+                        gsl_quad_tensor_set(dest,j,i,l,k,two_electron_replusion_energy);
+                    });
                 }
             }
-        }
-    }
+    pool.join();
 }
 
 
