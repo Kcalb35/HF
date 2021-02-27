@@ -34,20 +34,24 @@ std::vector<Atom> ReadBasis(std::fstream &ifile)
             }
             switch (orbital.l)
             {
-            case 0:
-                atom.Orbitals.push_back(SetOrbital(0, orbital));
-                break;
-            case 1:
-                // p orbital
-                atom.Orbitals.push_back(SetOrbital(0, orbital));
-                atom.Orbitals.push_back(SetOrbital(1, orbital));
-                atom.Orbitals.push_back(SetOrbital(-1, orbital));
-                break;
+                case 0:
+                    atom.Orbitals.push_back(SetOrbital(0, orbital));
+                    break;
+                case 1:
+                    // p orbital, push each p orbital into atom
+                    for (int k = -1; k <=1 ; ++k)
+                        atom.Orbitals.push_back(SetOrbital(k, orbital));
+                    break;
 
-            case 2:
-                // d orbital
-                throw "Not Implement";
-                break;
+                case 2:
+                    // push each d orbital into atom
+                    for (int k = -2; k <= 2; ++k)
+                        atom.Orbitals.push_back(SetOrbital(k,orbital));
+                    break;
+                case 3:
+                    // f orbital
+                    throw "Not Implement";
+                    break;
             }
         }
 
@@ -61,6 +65,7 @@ std::vector<Atom> ReadBasis(std::fstream &ifile)
 Orbital SetOrbital(int m, Orbital ob)
 {
     ob.m = m;
+    ob.name = std::to_string(ob.n);
     switch (ob.l)
     {
     case 0:
@@ -71,7 +76,7 @@ Orbital SetOrbital(int m, Orbital ob)
             gto.ang[1] = 0;
             gto.ang[2] = 0;
         }
-        ob.name = std::to_string(ob.n) + "s";
+        ob.name +="s";
         break;
     case 1:
         // p orbital
@@ -85,7 +90,7 @@ Orbital SetOrbital(int m, Orbital ob)
                 gto.ang[1] = 1;
                 gto.ang[0] = 0;
             }
-            ob.name = std::to_string(ob.n) + "py";
+            ob.name += "py";
             break;
         case 0:
             // pz
@@ -95,7 +100,7 @@ Orbital SetOrbital(int m, Orbital ob)
                 gto.ang[1] = 0;
                 gto.ang[2] = 1;
             }
-            ob.name = std::to_string(ob.n) + "pz";
+            ob.name += "pz";
             break;
         case 1:
             for (auto &gto : ob.component)
@@ -104,13 +109,50 @@ Orbital SetOrbital(int m, Orbital ob)
                 gto.ang[1] = 0;
                 gto.ang[2] = 0;
             }
-            ob.name = std::to_string(ob.n) + "px";
+            ob.name += "px";
             break;
         }
         break;
     case 2:
         // d orbital
-        throw "Not Implement";
+        switch (ob.m) {
+            case -2:
+                //dx2-y2
+                for (int i = 0; i < ob.component.size(); ++i) {
+                   GTO dx2 = ob.component[i];
+                   InitGTOAng(dx2,2,0,0);
+                   InitGTOAng(ob.component[i],0,2,0);
+                   dx2.coefficient *= 1.0/sqrt(2.0);
+                   ob.component[i].coefficient *= -1.0/sqrt(2.0);
+                   ob.component.push_back(dx2);
+                }
+                ob.name += "dx2-y2" ;
+                break;
+            case -1:
+                // dyz
+                for(auto &gto:ob.component)
+                    InitGTOAng(gto,0,1,1);
+                ob.name += "dyz" ;
+                break;
+            case 0:
+                //dz2
+                for(auto &gto:ob.component)
+                    InitGTOAng(gto,0,0,2);
+                ob.name += "dx2";
+                break;
+            case 1:
+                //dxz
+                for(auto &gto:ob.component)
+                    InitGTOAng(gto,1,0,1);
+                ob.name += "dxz";
+                break;
+            case 2:
+                //dxy
+                for(auto &gto:ob.component)
+                    InitGTOAng(gto,1,1,0);
+                ob.name += "dxy";
+                break;
+        }
         break;
     case 3:
         // f orbital

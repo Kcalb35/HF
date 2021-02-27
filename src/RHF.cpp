@@ -12,7 +12,6 @@
 #include <gsl/gsl_blas.h>
 #include <cmath>
 #include <iostream>
-#include <iomanip>
 
 /// single electron hamiltonian element
 /// \param LOb left orbital
@@ -32,11 +31,12 @@ double single_electron_hamiltonian_element(Orbital &LOb, Orbital &ROb, std::vect
 /// \param obs a list of all orbitals
 /// \param atoms a list of all atoms
 void core_hamiltonian_matrix_set(gsl_matrix * dest, std::vector<Orbital> &obs, std::vector<Atom> &atoms){
-    // todo optimize with symmetric matrix
     int length = obs.size();
     for (int i = 0; i < length; ++i) {
-        for (int j = 0; j < length; ++j) {
-            gsl_matrix_set(dest,i,j,single_electron_hamiltonian_element(obs[i],obs[j],atoms));
+        for (int j = 0; j <= i; ++j) {
+            double hamiltonian_element= single_electron_hamiltonian_element(obs[i],obs[j],atoms);
+            gsl_matrix_set(dest,i,j,hamiltonian_element);
+            gsl_matrix_set(dest,j,i,hamiltonian_element);
         }
     }
 }
@@ -88,9 +88,9 @@ double Fock_matrix_element(gsl_quad_tensor * tensor,gsl_matrix * density_matrix,
     for (int k = 0; k < length; ++k) {
         for (int l = 0; l < length; ++l) {
             // coulomb integral
-           result += 2 * gsl_matrix_get(density_matrix,k,l) * gsl_quad_tensor_get(tensor,i,j,k,l);
-           result -= gsl_matrix_get(density_matrix,k,l) * gsl_quad_tensor_get(tensor,i,l,k,j);
-        } 
+            result += 2 * gsl_matrix_get(density_matrix,k,l) * gsl_quad_tensor_get(tensor,i,j,k,l);
+            result -= gsl_matrix_get(density_matrix,k,l) * gsl_quad_tensor_get(tensor,i,l,k,j);
+        }
     }
     return result;
 }
@@ -153,14 +153,21 @@ double HF_energy(gsl_quad_tensor *v,gsl_matrix * density,gsl_matrix * h_core){
     return 2 * result;
 }
 
+/// two_electron_quad_tensor_set
+/// \param dest
+/// \param obs
 void two_electron_quad_tensor_set(gsl_quad_tensor * dest,std::vector<Orbital> &obs){
+    // using symmetric to optimize
     int len = obs.size();
-    // todo optimize
     for (int i = 0; i <len; ++i) {
-        for (int j = 0; j < len; ++j) {
+        for (int j = 0; j <=i; ++j) {
             for (int k = 0; k < len; ++k) {
-                for (int l = 0; l < len; ++l) {
-                   gsl_quad_tensor_set(dest,i,j,k,l,Two_Electron_JIntegral(obs[i],obs[j],obs[k],obs[l]));
+                for (int l = 0; l <=k; ++l) {
+                    double two_electron_replusion_energy = Two_Electron_JIntegral(obs[i],obs[j],obs[k],obs[l]);
+                    gsl_quad_tensor_set(dest,i,j,k,l,two_electron_replusion_energy);
+                    gsl_quad_tensor_set(dest,i,j,l,k,two_electron_replusion_energy);
+                    gsl_quad_tensor_set(dest,j,i,k,l,two_electron_replusion_energy);
+                    gsl_quad_tensor_set(dest,j,i,l,k,two_electron_replusion_energy);
                 }
             }
         }
@@ -181,10 +188,10 @@ void kinetic_matrix_set(gsl_matrix *m, std::vector<Orbital> &obs) {
 }
 
 double nuclear_attraction_energy(Orbital &LOb, Orbital &ROb, std::vector<Atom> &atoms) {
-   double result = 0;
-   for(auto &atom:atoms){
-       result -= atom.n * Orbital_ZIntegral(LOb,ROb,atom.cartesian);
-   }
+    double result = 0;
+    for(auto &atom:atoms){
+        result -= atom.n * Orbital_ZIntegral(LOb,ROb,atom.cartesian);
+    }
     return result;
 }
 
@@ -193,10 +200,12 @@ double nuclear_attraction_energy(Orbital &LOb, Orbital &ROb, std::vector<Atom> &
 /// \param obs all orbitals
 /// \param atoms all atoms
 void nuclear_attraction_energy_matrix_set(gsl_matrix *m, std::vector<Orbital> obs,std::vector<Atom> &atoms) {
-   int len = obs.size();
+    int len = obs.size();
     for (int i = 0; i < len; ++i) {
-        for (int j = 0; j < len; ++j) {
-            gsl_matrix_set(m, i, j, nuclear_attraction_energy(obs[i], obs[j], atoms));
+        for (int j = 0; j <=i; ++j) {
+            double nuclear_attration_energy_matrix_element = nuclear_attraction_energy(obs[i], obs[j], atoms);
+            gsl_matrix_set(m, i, j,nuclear_attration_energy_matrix_element);
+            gsl_matrix_set(m,j,i,nuclear_attration_energy_matrix_element);
         }
     }
 }
@@ -324,8 +333,10 @@ void Orbital_S_matrix_set(gsl_matrix * S,std::vector<Orbital>& orbitals){
     int len = orbitals.size();
     // todo optimize symmetric
     for (int i = 0; i < len; ++i) {
-        for (int j = 0; j < len; ++j) {
-            gsl_matrix_set(S,i,j,Orbital_SIntegral(orbitals[i],orbitals[j]));
+        for (int j = 0; j <= i; ++j) {
+            double overlap_integral = Orbital_SIntegral(orbitals[i],orbitals[j]);
+            gsl_matrix_set(S,i,j,overlap_integral);
+            gsl_matrix_set(S,j,i,overlap_integral);
         }
     }
 }

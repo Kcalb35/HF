@@ -2,6 +2,7 @@
 #include <iostream>
 #include <gsl/gsl_matrix.h>
 #include <iomanip>
+#include <ctime>
 
 #include "include/basis.h"
 #include "include/input.h"
@@ -48,8 +49,14 @@ int main(int argc, char const *argv[])
     energy = gsl_vector_calloc(option.ORBITAL_NUMBER);
     coeff = gsl_matrix_calloc(option.ORBITAL_NUMBER,option.ORBITAL_NUMBER);
 
+    // calculate time
+    const clock_t begin_time = clock();
+
     // start RHF
     RHF_SCF(&total_energy,energy,coeff,allAtoms,allOrbitals,option);
+
+    double run_time = float(clock()-begin_time)/ CLOCKS_PER_SEC;
+    cout << "Takes :" <<run_time<<"s"<<endl;
 
     // print atom orbital labels
     cout <<"Atom orbital labels : [";
